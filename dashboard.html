@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم 🔒</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap');
+:root{--bg:#080b10;--border:#1c2333;--accent:#e8445a;--pink:#ff6b9d;--gold:#f0b429;--text:#cdd9e5;--muted:#768390;--green:#2ea043;--card:#161b22;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'Tajawal',sans-serif;color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 90% 10%,rgba(232,68,90,.06) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:var(--bg);}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.login-box .lock{font-size:3rem;margin-bottom:16px;}
+.login-box h2{font-size:1.4rem;font-weight:900;color:var(--accent);margin-bottom:6px;}
+.login-box p{font-size:.85rem;color:var(--muted);margin-bottom:28px;}
+.login-box input{width:100%;padding:13px 16px;background:#0d1117;border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.1rem;text-align:center;outline:none;margin-bottom:16px;transition:border-color .2s;}
+.login-box input:focus{border-color:var(--accent);}
+.login-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:10px;color:#fff;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;}
+.err{color:var(--accent);font-size:.85rem;margin-top:10px;min-height:18px;}
+
+/* DASHBOARD */
+#dashboard{display:none;position:relative;z-index:1;}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(8,11,16,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:900;color:var(--accent);}
+.topbar-brand span{opacity:.5;font-weight:300;font-size:.85rem;color:var(--muted);}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);margin-right:6px;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.topbar-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.tb-btn{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Error banner */
+.err-banner{display:none;margin:16px 28px;padding:14px 20px;background:rgba(232,68,90,.1);border:1px solid rgba(232,68,90,.3);border-radius:12px;color:#ff9aa8;font-size:.9rem;line-height:1.7;}
+.err-banner.show{display:block;}
+.err-banner code{background:rgba(255,255,255,.08);padding:2px 8px;border-radius:4px;font-size:.8rem;}
+
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding:20px 28px 0;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
+.stat-card .sv{font-size:1.8rem;font-weight:900;color:var(--accent);line-height:1;}
+.stat-card .sl{font-size:.78rem;color:var(--muted);margin-top:4px;}
+
+.filter-bar{padding:16px 28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.filter-bar input{flex:1;min-width:160px;padding:9px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;outline:none;}
+.filter-bar input:focus{border-color:var(--accent);}
+.filter-bar select{padding:9px 12px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;outline:none;cursor:pointer;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:0 28px 40px;}
+.capture-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s,transform .2s;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.capture-card:hover{border-color:rgba(232,68,90,.4);transform:translateY(-2px);}
+.photo-wrap{position:relative;width:100%;aspect-ratio:4/3;background:#0a0d12;overflow:hidden;}
+.photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in;transition:transform .3s;}
+.photo-wrap img:hover{transform:scale(1.03);}
+.no-photo{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);}
+.no-photo .ico{font-size:2.5rem;opacity:.3;}
+.score-badge{position:absolute;top:10px;left:10px;background:linear-gradient(135deg,var(--accent),var(--pink));color:#fff;font-weight:900;padding:4px 10px;border-radius:16px;font-size:.85rem;}
+.new-badge{position:absolute;top:10px;right:10px;background:var(--green);color:#fff;font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:10px;}
+.card-body{padding:14px;}
+.card-names{font-size:1rem;font-weight:700;color:#e6edf3;margin-bottom:4px;}
+.card-names .hs{color:var(--accent);margin:0 5px;}
+.card-time{font-size:.72rem;color:var(--muted);margin-bottom:8px;}
+.card-meta{display:flex;gap:6px;flex-wrap:wrap;}
+.badge{padding:2px 9px;border-radius:20px;font-size:.7rem;border:1px solid;}
+.badge.photo{color:var(--green);border-color:rgba(46,160,67,.4);}
+.badge.nophoto{color:var(--muted);border-color:var(--border);}
+.badge.high{color:var(--gold);border-color:rgba(240,180,41,.4);}
+
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);}
+.empty .icon{font-size:3.5rem;margin-bottom:12px;opacity:.3;}
+
+#lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:20px;}
+#lightbox.open{display:flex;}
+#lightbox img{max-width:90vw;max-height:85vh;border-radius:10px;box-shadow:0 0 60px rgba(0,0,0,.8);}
+.lb-close{position:absolute;top:18px;right:18px;font-size:1.8rem;color:#fff;cursor:pointer;opacity:.7;line-height:1;}
+.lb-close:hover{opacity:1;}
+.lb-info{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.1);backdrop-filter:blur(10px);padding:10px 22px;border-radius:30px;text-align:center;color:#fff;font-size:.88rem;white-space:nowrap;}
+
+.loader{grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);}
+.spinner{display:inline-block;width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="lock">🔐</div>
+    <h2>لوحة التحكم السرية</h2>
+    <p>أدخل كلمة المرور للدخول</p>
+    <input type="password" id="pwInput" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">دخول</button>
+    <div class="err" id="errMsg"></div>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-brand">
+      💕 لوحة التحكم
+      <span><span class="live-dot"></span>Firebase Live</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="tb-btn" onclick="exportJSON()">⬇️ تصدير</button>
+      <button class="tb-btn" onclick="retryLoad()">🔄 تحديث</button>
+      <button class="tb-btn" onclick="logout()">خروج</button>
+    </div>
+  </div>
+
+  <!-- Error banner -->
+  <div class="err-banner" id="errBanner"></div>
+
+  <div class="stats-row" id="statsRow"></div>
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="🔍 بحث باسم..." oninput="renderGrid()">
+    <select id="filterPhoto" onchange="renderGrid()">
+      <option value="all">كل السجلات</option>
+      <option value="photo">مع صورة فقط</option>
+      <option value="nophoto">بدون صورة</option>
+    </select>
+    <select id="sortBy" onchange="renderGrid()">
+      <option value="newest">الأحدث أولاً</option>
+      <option value="score">أعلى نتيجة</option>
+    </select>
+  </div>
+  <div class="grid" id="grid">
+    <div class="loader"><div class="spinner"></div><br>جاري الاتصال بـ Firebase...</div>
+  </div>
+</div>
+
+<div id="lightbox" onclick="closeLB()">
+  <span class="lb-close">✕</span>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-info" id="lbInfo"></div>
+</div>
+
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, orderBy, query, onSnapshot, limit }
+                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FB = {
+  apiKey:"AIzaSyBgYvV7d63RMMYxb69dtvi9kiC2gKJ6VqQ",
+  authDomain:"love-918b6.firebaseapp.com",
+  projectId:"love-918b6",
+  storageBucket:"love-918b6.firebasestorage.app",
+  messagingSenderId:"1079322550684",
+  appId:"1:1079322550684:web:8a29cdf50bb9bf6654a859"
+};
+
+const app = initializeApp(FB);
+const db  = getFirestore(app);
+
+const PASS = "love2024"; // ← غيّر كلمة المرور هنا
+let allData   = [];
+let unsub     = null;
+let loggedIn  = false;
+
+// ── Auth ──
+window.doLogin = function(){
+  if(document.getElementById('pwInput').value !== PASS){
+    document.getElementById('errMsg').textContent='❌ كلمة المرور خاطئة';
+    setTimeout(()=>document.getElementById('errMsg').textContent='',2500);
+    return;
+  }
+  loggedIn=true;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  startListener();
+};
+
+window.logout=function(){
+  if(unsub){unsub();unsub=null;}
+  loggedIn=false;
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('pwInput').value='';
+  allData=[];
+};
+
+// ── Firestore: try realtime, fallback to getDocs ──
+function startListener(){
+  showBanner('');
+  document.getElementById('grid').innerHTML='<div class="loader"><div class="spinner"></div><br>جاري التحميل...</div>';
+
+  // أولاً: محاولة onSnapshot مع orderBy (يحتاج index)
+  try{
+    const q = query(collection(db,'captures'), orderBy('timestamp','desc'), limit(200));
+    unsub = onSnapshot(q,
+      snap=>{
+        allData = snap.docs.map(d=>({
+          id:d.id, ...d.data(),
+          time: d.data().timestamp?.toDate
+              ? d.data().timestamp.toDate().toLocaleString('ar-SA')
+              : 'غير محدد'
+        }));
+        renderStats(); renderGrid();
+      },
+      err=>{
+        console.warn('onSnapshot error:', err.code);
+        if(err.code==='failed-precondition'||err.code==='unimplemented'){
+          // index غير موجود — جرّب بدون orderBy
+          fallbackLoad();
+        } else {
+          showBanner(buildErrMsg(err));
+          renderGrid();
+        }
+      }
+    );
+  }catch(e){ fallbackLoad(); }
+}
+
+// بدون orderBy إذا لم يكن الـ index موجوداً
+async function fallbackLoad(){
+  try{
+    const snap = await getDocs(collection(db,'captures'));
+    allData = snap.docs.map(d=>({
+      id:d.id, ...d.data(),
+      time: d.data().timestamp?.toDate
+          ? d.data().timestamp.toDate().toLocaleString('ar-SA')
+          : 'غير محدد'
+    }));
+    // ترتيب يدوي بالـ id (timestamp بديل)
+    allData.sort((a,b)=> b.id.localeCompare(a.id));
+    renderStats(); renderGrid();
+    showBanner('تم التحميل بدون ترتيب زمني — لإنشاء الـ index اضغط <a href="https://console.firebase.google.com/project/love-918b6/firestore/indexes" target="_blank" style="color:#ff9aa8">هنا</a> ثم أعد تحديث الصفحة','warn');
+  }catch(err){
+    showBanner(buildErrMsg(err));
+    document.getElementById('grid').innerHTML='<div class="empty"><div class="icon">⚠️</div><p>تعذّر الاتصال بـ Firebase</p></div>';
+  }
+}
+
+window.retryLoad = startListener;
+
+function buildErrMsg(err){
+  const fixes = {
+    'permission-denied': `⛔ <b>Permission Denied</b> — قواعد Firestore تمنع القراءة.<br>اذهب إلى <a href="https://console.firebase.google.com/project/love-918b6/firestore/rules" target="_blank" style="color:#ff9aa8">Firestore Rules</a> وانسخ القواعد الصحيحة من ملف SETUP.txt`,
+    'failed-precondition': `📋 <b>Index مفقود</b> — افتح <a href="https://console.firebase.google.com/project/love-918b6/firestore/indexes" target="_blank" style="color:#ff9aa8">Firebase Indexes</a> وأنشئ index على حقل <code>timestamp</code> تنازلياً`,
+    'unavailable': `🌐 <b>Firebase غير متاح</b> — تحقق من الاتصال بالإنترنت`,
+  };
+  return fixes[err.code] || `❌ خطأ: <code>${err.code}</code> — ${err.message}`;
+}
+
+function showBanner(msg, type='error'){
+  const b=document.getElementById('errBanner');
+  if(!msg){b.classList.remove('show');b.innerHTML='';return;}
+  b.innerHTML=msg; b.classList.add('show');
+  b.style.background=type==='warn'?'rgba(240,180,41,.1)':'rgba(232,68,90,.1)';
+  b.style.borderColor=type==='warn'?'rgba(240,180,41,.3)':'rgba(232,68,90,.3)';
+  b.style.color=type==='warn'?'#f0d080':'#ff9aa8';
+}
+
+// ── Stats ──
+function renderStats(){
+  const t=allData.length,p=allData.filter(d=>d.hasPhoto).length;
+  const avg=t?Math.round(allData.reduce((a,d)=>a+(d.score||0),0)/t):0;
+  const top=t?Math.max(...allData.map(d=>d.score||0)):0;
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-card"><div class="sv">${t}</div><div class="sl">إجمالي الاختبارات</div></div>
+    <div class="stat-card"><div class="sv">${p}</div><div class="sl">📸 صور ملتقطة</div></div>
+    <div class="stat-card"><div class="sv">${t-p}</div><div class="sl">بدون كاميرا</div></div>
+    <div class="stat-card"><div class="sv">${avg}%</div><div class="sl">متوسط الحب</div></div>
+    <div class="stat-card"><div class="sv">${top}%</div><div class="sl">💘 أعلى درجة</div></div>
+  `;
+}
+
+// ── Grid ──
+window.renderGrid=function(){
+  const s=document.getElementById('searchInput').value.toLowerCase();
+  const f=document.getElementById('filterPhoto').value;
+  const o=document.getElementById('sortBy').value;
+  let data=[...allData];
+  if(s) data=data.filter(d=>(d.name1||'').toLowerCase().includes(s)||(d.name2||'').toLowerCase().includes(s));
+  if(f==='photo')   data=data.filter(d=>d.hasPhoto);
+  if(f==='nophoto') data=data.filter(d=>!d.hasPhoto);
+  if(o==='score')   data.sort((a,b)=>(b.score||0)-(a.score||0));
+
+  const grid=document.getElementById('grid');
+  if(!data.length){
+    grid.innerHTML=`<div class="empty"><div class="icon">💔</div><p>لا توجد سجلات بعد</p></div>`;
+    return;
+  }
+  grid.innerHTML=data.map((d,i)=>`
+    <div class="capture-card">
+      <div class="photo-wrap">
+        ${d.photoURL
+          ?`<img src="${d.photoURL}" alt="صورة" onclick="openLB('${d.id}')" loading="lazy"
+               onerror="this.parentElement.innerHTML='<div class=\\'no-photo\\'><div class=\\'ico\\'>🖼️</div><span>تعذّر تحميل الصورة</span></div>'">`
+          :`<div class="no-photo"><div class="ico">📷</div><span>لم تُمنح صلاحية الكاميرا</span></div>`
+        }
+        <div class="score-badge">${d.score||0}% 💕</div>
+        ${i===0?'<div class="new-badge">🆕 جديد</div>':''}
+      </div>
+      <div class="card-body">
+        <div class="card-names">${escHtml(d.name1||'؟')}<span class="hs">♥</span>${escHtml(d.name2||'؟')}</div>
+        <div class="card-time">🕐 ${d.time}</div>
+        <div class="card-meta">
+          ${d.hasPhoto?'<span class="badge photo">📸 مع صورة</span>':'<span class="badge nophoto">بدون صورة</span>'}
+          ${(d.score||0)>=85?'<span class="badge high">💘 حب عالٍ</span>':''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+};
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Lightbox ──
+window.openLB=function(id){
+  const d=allData.find(x=>x.id===id);
+  if(!d||!d.photoURL)return;
+  document.getElementById('lbImg').src=d.photoURL;
+  document.getElementById('lbInfo').innerHTML=`${escHtml(d.name1||'')} ♥ ${escHtml(d.name2||'')} | ${d.score}% | ${d.time}`;
+  document.getElementById('lightbox').classList.add('open');
+};
+window.closeLB=()=>document.getElementById('lightbox').classList.remove('open');
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')window.closeLB();
+  if(e.key==='Enter'&&!loggedIn)window.doLogin();
+});
+
+// ── Export ──
+window.exportJSON=function(){
+  const b=new Blob([JSON.stringify(allData,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download=`love_${Date.now()}.json`;a.click();
+};
+</script>
+</body>
+</html>
